@@ -2,6 +2,7 @@ package com.evggenn.ecommerce.order;
 
 import com.evggenn.ecommerce.customer.CustomerClient;
 import com.evggenn.ecommerce.exception.BusinessException;
+import com.evggenn.ecommerce.product.ProductClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -10,11 +11,13 @@ import org.springframework.stereotype.Service;
 public class OrderService {
 
     private final CustomerClient customerClient;
-    //private final ProductClient productClient;
+    private final ProductClient productClient;
 
     public Long createOrder(OrderRequest request) {
         var customer = this.customerClient.findCustomerById(request.customerId())
                 .orElseThrow(() -> new BusinessException("Cannot create order:: No customer exists with the provided ID"));
+        var purchasedProducts = productClient.purchaseProducts(request.products());
+
 
         return null;
     }
