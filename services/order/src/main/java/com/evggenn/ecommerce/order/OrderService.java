@@ -45,6 +45,8 @@ public class OrderService {
             );
         }
 
+
+
         orderProducer.sendOrderConfirmation(
                 new OrderConfirmation(
                         request.reference(),
