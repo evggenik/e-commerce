@@ -6,6 +6,8 @@ import com.evggenn.ecommerce.kafka.OrderConfirmation;
 import com.evggenn.ecommerce.kafka.OrderProducer;
 import com.evggenn.ecommerce.orderline.OrderLineRequest;
 import com.evggenn.ecommerce.orderline.OrderLineService;
+import com.evggenn.ecommerce.payment.PaymentClient;
+import com.evggenn.ecommerce.payment.PaymentRequest;
 import com.evggenn.ecommerce.product.ProductClient;
 import com.evggenn.ecommerce.product.PurchaseRequest;
 import jakarta.persistence.EntityNotFoundException;
@@ -22,6 +24,7 @@ public class OrderService {
     private final OrderRepository repository;
     private final OrderMapper mapper;
     private final CustomerClient customerClient;
+    private final PaymentClient paymentClient;
     private final ProductClient productClient;
     private final OrderLineService orderLineService;
     private final OrderProducer orderProducer;
@@ -45,7 +48,14 @@ public class OrderService {
             );
         }
 
-
+        var paymentRequest = new PaymentRequest(
+                request.amount(),
+                request.paymentMethod(),
+                order.getId(),
+                order.getReference(),
+                customer
+        );
+        paymentClient.requestOrderPayment(paymentRequest);
 
         orderProducer.sendOrderConfirmation(
                 new OrderConfirmation(
