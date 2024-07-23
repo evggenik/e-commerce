@@ -13,6 +13,7 @@ import com.evggenn.ecommerce.product.PurchaseRequest;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,6 +30,7 @@ public class OrderService {
     private final OrderLineService orderLineService;
     private final OrderProducer orderProducer;
 
+    @Transactional
     public Long createOrder(OrderRequest request) {
         var customer = this.customerClient.findCustomerById(request.customerId())
                 .orElseThrow(() -> new BusinessException("Cannot create order:: No customer exists with the provided ID"));
